@@ -47,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -77,6 +78,11 @@ public class DownloadManager extends JFrame implements Observer {
     private boolean clearing;
 
     public DownloadManager() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setTitle("Java Download Manager :D");
         setSize(640, 480);
         setLocationRelativeTo(null);
@@ -195,15 +201,14 @@ public class DownloadManager extends JFrame implements Observer {
 
         jfchooser.showOpenDialog(this);
         File newZipFile = jfchooser.getSelectedFile();
-        if(newZipFile == null)
-            return;
+        if (newZipFile == null) return;
         System.out.println("importProfile:" + newZipFile);
         this.saveFileLabel.setText(newZipFile.getPath());
 
     }
 
     private void actionAdd() {
-        if(saveFileLabel.getText() == "File:"){
+        if (saveFileLabel.getText() == "File:") {
             JOptionPane.showMessageDialog(this, "Please specify an area to download the file to", "Error",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -219,8 +224,7 @@ public class DownloadManager extends JFrame implements Observer {
     }
 
     private URL verifyUrl(String url) {
-        if (!url.toLowerCase().startsWith("http://"))
-            return null;
+        if (!url.toLowerCase().startsWith("http://")) return null;
 
         URL verifiedUrl = null;
         try {
@@ -229,15 +233,13 @@ public class DownloadManager extends JFrame implements Observer {
             return null;
         }
 
-        if (verifiedUrl.getFile().length() < 2)
-            return null;
+        if (verifiedUrl.getFile().length() < 2) return null;
 
         return verifiedUrl;
     }
 
     private void tableSelectionChanged() {
-        if (selectedDownload != null)
-            selectedDownload.deleteObserver(DownloadManager.this);
+        if (selectedDownload != null) selectedDownload.deleteObserver(DownloadManager.this);
 
         if (!clearing && table.getSelectedRow() > -1) {
             selectedDownload = tableModel.getDownload(table.getSelectedRow());
@@ -306,8 +308,7 @@ public class DownloadManager extends JFrame implements Observer {
     }
 
     public void update(Observable o, Object arg) {
-        if (selectedDownload != null && selectedDownload.equals(o))
-            updateButtons();
+        if (selectedDownload != null && selectedDownload.equals(o)) updateButtons();
     }
 
     public static void main(String[] args) {
@@ -468,8 +469,7 @@ class Download extends Observable implements Runnable {
                 }
 
                 int read = stream.read(buffer);
-                if (read == -1)
-                    break;
+                if (read == -1) break;
 
                 out.write(buffer, 0, read);
                 downloaded += read;
@@ -478,7 +478,7 @@ class Download extends Observable implements Runnable {
 
             if (status == DOWNLOADING) {
                 status = COMPLETE;
-                JOptionPane.showMessageDialog(null,"File was downloaded successfully", "Success",
+                JOptionPane.showMessageDialog(null, "File was downloaded successfully", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
                 stateChanged();
             }
